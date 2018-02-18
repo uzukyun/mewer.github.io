@@ -1,0 +1,67 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Sun Feb 18 00:17:44 2018
+;; Desktop file format version 208
+;; Emacs version 25.2.1
+
+;; Global section:
+(setq desktop-saved-frameset [frameset 1 (23176 18328 773111 600000) (desktop . "208") "mewer@uzukyun" nil nil ((((font-backend uniscribe gdi) (font . "-outline-Courier New-normal-normal-normal-mono-27-*-*-*-c-*-iso8859-1") (ime-font) (border-width . 2) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars . right) (horizontal-scroll-bars) (foreground-color . "SystemWindowText") (background-color . "SystemWindow") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (alpha) (menu-bar-lines . 1) (tool-bar-lines . 2) (height . 56) (title) (icon-type) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 34) (scroll-bar-height . 0) (fullscreen) (display-type . color) (background-mode . light) (cursor-color . "black") (environment) (frameset--id . "6810-5CF9-BDDE-BC03") (frameset--mini t . t) (modeline . t) (minibuffer . t) (unsplittable) (icon-name) (display . "w32") (explicit-name) (tool-bar-position . top) (visibility . t) (width . 176) (left . 5107) (top + -707)) ((min-height . 4) (min-width . 10) (min-height-ignore . 3) (min-width-ignore . 6) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 120) (min-pixel-width . 160) (min-pixel-height-ignore . 90) (min-pixel-width-ignore . 96) (min-pixel-height-safe . 30) (min-pixel-width-safe . 32)) leaf (pixel-width . 2880) (pixel-height . 1650) (total-width . 180) (total-height . 55) (normal-height . 1.0) (normal-width . 1.0) (buffer "index.html" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 3 t nil 0 t) (vscroll . 0) (dedicated) (point . 17871) (start . 16762))))])
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '("swiper" "counsel" "global-se" "use-f" "auto-complete-config" "auto-com" "part" "par" "C-j" "server" "csha" "omnisharp" "csharp" "flycheck-po" "flycheck"))
+(setq regexp-search-ring '("sq" "sur" "knot\"" "mesh1" "cube" "camera_" "\\(ar\\).*?\\(camera\\)" "rock" "yasni" "yasnippet" "symbol-" "dumb" "aut" "auto-com" "auto-co" "company"))
+(setq register-alist nil)
+(setq file-name-history '("c:/var/www/ar/preindex.html" "c:/var/www/ar/index.html" "c:/var/www/ar/index.html\n.index.html" "c:/var/www/ar/.index.html" "c:/var/www/ar/" "c:/Users/mewer/AppData/Roaming/.emacs.d/inits/common/modesetting.el" "c:/Users/mewer/AppData/Roaming/.emacs.d/inits/common/mykeybind.el" "c:/Users/mewer/AppData/Roaming/.emacs.d/inits/common" "c:/Users/mewer/AppData/Roaming/.emacs.d/inits/mykeybind.el" "f:/HP/desktop/win/" "f:/article/desktop/win/" "f:/HP/desktop/win/" "f:/article/desktop/win/" "~/.emacs.d/inits/init-win.el" "f:/article/desktop/win/" "f:/HP/update/sinsei/googlecalendar/calendarfunction.php" "f:/HP/update/js/myscript.js" "e:/programs/unity/Projects/vr vive/Assets/script/test.cs" "f:/HP/desktop/win/" "f:/article/desktop/win/" "f:/HP/desktop/win/" "f:/article/desktop/win/" "~/.emacs.d/"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 208
+  "c:/var/www/ar/index.html"
+  "index.html"
+  'web-mode
+  '(ivy-mode company-mode yas-minor-mode symbol-overlay-mode flycheck-mode avy-migemo-mode)
+  17871
+  '(17904 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-dos))
+  '((mark-ring (17527 17202 17940 17527 17815 17748 17786 17719 18431 18581 18516 18581 9541 17527 17527 8679))))
+
+(desktop-create-buffer 208
+  "c:/var/www/ar/preindex.html"
+  "preindex.html"
+  'web-mode
+  '(ivy-mode company-mode yas-minor-mode symbol-overlay-mode flycheck-mode avy-migemo-mode)
+  6789
+  '(5095 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (6789 5095 6789 5095 6789 9891 9292 9945 12991 11724 8877 8552 274 559 13185 4754))))
+
+(desktop-create-buffer 208
+  "c:/Users/mewer/AppData/Roaming/.emacs.d/elpa/symbol-overlay-20171103.2306/symbol-overlay-autoloads.el"
+  "symbol-overlay-autoloads.el"
+  'emacs-lisp-mode
+  '(ivy-mode company-mode yas-minor-mode symbol-overlay-mode flycheck-mode avy-migemo-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "c:/Users/mewer/AppData/Roaming/.emacs.d/init.el"
+  "init.el"
+  'emacs-lisp-mode
+  '(ivy-mode company-mode yas-minor-mode symbol-overlay-mode flycheck-mode avy-migemo-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-file-coding-system . utf-8-with-signature-dos))
+  '((mark-ring nil)))
+
