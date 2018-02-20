@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimum-scale=1,maximum-scale=1">
+	<style>
+	  body {
+	      margin: 0px;
+	      overflow: hidden;
+	  }  
+	</style>
+	<title>サンプル2</title>
+    </head>
+
+    <body>
+
+	<!-- Three.js のインクルード -->
+	<!-- https://github.com/mrdoob/three.js/build/ より DL  -->
+	<script src='js/three/three.min.js'></script>
+
+	<!-- AR.js のインクルード -->
+	<!-- https://github.com/jeromeetienne/AR.js/tree/master/three.js/build/ より DL  -->
+	<script src="js/AR/ar.min.js"></script>
+
+	<!-- アニメーションのために Tween.js をインクルード -->
+	<!-- https://github.com/tweenjs/tween.js/tree/master/src/ より DL -->
+	<script src="js/tween/Tween.js"></script>
+
+	<!-- fpsを表示させる stats.js をインクルード -->
+	<script src='js/stats/stats.min.js'></script>
+
+	<script>
+	 //===================================================================
+	 // three.js の各種設定
+	 //===================================================================
+	 let scene = new THREE.Scene();                        // シーンの作成
+	 let renderer = new THREE.WebGLRenderer({              // レンダラの作成
+	     antialias: true,                                    // アンチエイリアス有効
+							       alpha: true,                                        // canvasに透明度バッファを持たせる
+	 });
+	 renderer.setClearColor(new THREE.Color("black"), 0);  // レンダラの背景色
+	 renderer.setSize(640, 480);                           // レンダラのサイズ
+	 renderer.domElement.style.position = "absolute";      // レンダラの位置は絶対値
+	 renderer.domElement.style.top = "0px";                // レンダラの上端
+	 renderer.domElement.style.left = "0px";               // レンダラの左端
+	 document.body.appendChild(renderer.domElement);       // レンダラの DOM を body に入れる
+	 let camera = new THREE.Camera();                      // カメラの作成
+	 scene.add(camera);                                    // カメラをシーンに追加
+	 let light = new THREE.DirectionalLight(0xffffff);     // 平行光源（白）を作成
+	 light.position.set(0, 1, 2);                          // カメラ方向から照らす
+	 scene.add(light);                                     // シーンに光源を追加
+
+	 //===================================================================
+	 // arToolkitSource（マーカトラッキングするメディアソース）
+	 //===================================================================
+	 let source = new THREEx.ArToolkitSource({             // arToolkitSourceの作成
+	     sourceType: "webcam",                               // Webカメラを使う（スマホもこれでOK）
+	 });
+	 source.init(function onReady() {                      // ソースを初期化し、準備ができたら
+	     onResize();                                         // リサイズ処理
+	 });
+
+	 //===================================================================
+	 // arToolkitContext（カメラパラメータ、マーカ検出設定）
+	 //===================================================================
+	 let context = new THREEx.ArToolkitContext({           // arToolkitContextの作成
+	     debug: false,                                       // デバッグ用キャンバス表示（デフォルトfalse）
+							       cameraParametersUrl: "data/camera_para.dat",             // カメラパラメータファイル
+							       detectionMode: "mono",                              // 検出モード（color/color_and_matrix/mono/mono_and_matrix）
+							       imageSmoothingEnabled: true,                        // 画像をスムージングするか（デフォルトfalse）
+							       maxDetectionRate: 60,                               // マーカの検出レート（デフォルト60）
+							       canvasWidth: source.parameters.sourceWidth,         // マーカ検出用画像の幅（デフォルト640）
+							       canvasHeight: source.parameters.sourceHeight,       // マーカ検出用画像の高さ（デフォルト480）
+	 });
+	 context.init(function onCompleted(){                  // コンテクスト初期化が完了したら
+	     camera.projectionMatrix.copy(context.getProjectionMatrix());   // 射影行列をコピー
+	 });
+
+	 //===================================================================
+	 // リサイズ処理
+	 //===================================================================
+	 window.addEventListener("resize", function() {        // ウィンドウがリサイズされたら
+	     onResize();                                         // リサイズ処理
+	 });
+	 // リサイズ関数
+	 function onResize(){
+	     source.onResizeElement();                           // トラッキングソースをリサイズ
+	     source.copyElementSizeTo(renderer.domElement);      // レンダラも同じサイズに
+	     if(context.arController !== null){                  // arControllerがnullでなければ
+		 source.copyElementSizeTo(context.arController.canvas);  // それも同じサイズに
+	     } 
+	 }
+
+	 //-------------------------------
+	 // マーカー1
+	 //-------------------------------
+	 // マーカ
+	 // ネットでhiroマーカの画像を得て、以下の AR.js のマーカトレーニングサイトで patt を作成
+	 // https://jeromeetienne.github.io/AR.js/three.js/examples/marker-training/examples/generator.html
+	 let marker1 = new THREE.Group();                      // マーカをグループとして作成
+	 let controls = new THREEx.ArMarkerControls(context, marker1,
+						    {    // マーカを登録
+							type: "pattern",// マーカのタイプ
+							 patternUrl: "marker/trefoil.patt",// マーカファイル
+						    });
+	 scene.add(marker1);                                   // マーカをシーンに追加
+	 // モデル（メッシュ）
+	 
+	 //let geo = new THREE.CubeGeometry(1, 1, 1);            // cube ジオメトリ（サイズは 1x1x1）
+	 //let mat = new THREE.MeshNormalMaterial({              // マテリアルの作成
+	 //    transparent: true,                                  // 透過
+	 //						       opacity: 0.5,                                       // 不透明度
+	 //						       side: THREE.DoubleSide,                             // 内側も描く
+	 // });
+	 //let mesh1 = new THREE.Mesh(geo, mat);                 // メッシュを生成
+	 //mesh1.name = "cube";                                  // メッシュの名前（後でピッキングで使う）
+	 //mesh1.position.set(0, 0.5, 0);                        // 初期位置
+	 //marker1.add(mesh1);                                   // メッシュをマーカに追加
+	 
+	 //torusknot
+	 let geometry = new THREE.TorusKnotGeometry(0.3,0.05,64,8,2,3);
+	 //let material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+	 //let material = new THREE.MeshNormalMaterial({              // マテリアルの作成
+	 //    transparent: true,opacity: 0.8, side: THREE.DoubleSide,//透明オン,不透明度,内側も描く
+	 //});
+	 let material =  new THREE.MeshPhongMaterial({
+             color: 0xFF3333    //単色で         
+         });
+	 let torusKnot = new THREE.Mesh( geometry, material );
+	 torusKnot.position.set(0, 0.5, 0);                        // 初期位置
+	 torusKnot.rotation.set(Math.PI/2,0,0);                   //回転
+	 torusKnot.name = "knot";                                  // メッシュの名前（後でピッキングで使う）
+	 marker1.add( torusKnot );
+
+	 //wireフレーム
+	 let wiremat = new THREE.MeshBasicMaterial( { color: 0x333333,wireframe:true } );//wireフレーム
+	 let wiretorusKnot = new THREE.Mesh( geometry, wiremat );
+	 wiretorusKnot.position.set(0, 0.5, 0);                        // 初期位置
+	 wiretorusKnot.rotation.set(Math.PI/2,0,0);                   //回転
+	 marker1.add( wiretorusKnot );
+	 
+	 
+	 // マーカ隠蔽（cloaking）
+	 //let videoTex = new THREE.VideoTexture(source.domElement);  // 映像をテクスチャとして取得
+	 //videoTex.minFilter = THREE.NearestFilter;             // 映像テクスチャのフィルタ処理
+	 //let cloak = new THREEx.ArMarkerCloak(videoTex);       // マーカ隠蔽(cloak)オブジェクト
+	 //cloak.object3d.material.uniforms.opacity.value = 1.0; // cloakの不透明度
+	 //marker1.add(cloak.object3d);                          // cloakをマーカに追加
+
+	 //-------------------------------
+	 // mesh1 について（cubeが転がる）
+	 //-------------------------------
+	 var twIni1 = {posX:0,posZ: 0, rotX: Math.PI/2};                      // 初期パラメータ
+	 var twVal1 = {posX:0, posZ: 0, rotX: Math.PI/2};                      // tweenによって更新されるパラメータ
+	 var twFor1 = {posX:0,posZ: -1, rotX: 3*Math.PI/2};              // ターゲットパラメータ
+	 var twFor2 = {posX: -1, posZ: 0, rotX: 5*Math.PI/2};              // ターゲットパラメータ
+	 var twFor3 = {posX: 0, posZ: 1, rotX: 7*Math.PI/2};              // ターゲットパラメータ
+	 var twFor4 = {posX: 1, posZ: 0, rotX: 9*Math.PI/2};              // ターゲットパラメータ
+	 //let twFor1 = {rotY: };              // ターゲットパラメータ
+	 function tween1() {                                   // 「行き」のアニメーション
+	     var tween = new TWEEN.Tween(twVal1)                 // tweenオブジェクトを作成
+				  .to(twFor1, 1000)                                   // ターゲットと到達時間
+				  .easing(TWEEN.Easing.Linear.None)                      // イージング
+				  .onUpdate(function() {                              // フレーム更新時の処理
+				      torusKnot.position.z = twVal1.posZ;                   // 位置を変更
+				      torusKnot.rotation.x = twVal1.rotX;                   // 回転を変更
+				  })
+				  .onComplete(function() {                            // アニメーション完了時の処理
+				      tween1_2();                                    // 「帰り」のアニメーションを実行
+				  })
+				  .delay(0)                                           // 開始までの遅延時間
+				  .start();                                           // tweenアニメーション開始
+	 }
+	 function tween1_2() {                                   // 「行き」のアニメーション
+	     var tween = new TWEEN.Tween(twVal1)                 // tweenオブジェクトを作成
+				  .to(twFor2, 1000)                                   // ターゲットと到達時間
+				  .easing(TWEEN.Easing.Linear.None)                      // イージング
+				  .onUpdate(function() {                              // フレーム更新時の処理
+				      torusKnot.position.z = twVal1.posZ;                   // 位置を変更
+				      torusKnot.position.x = twVal1.posX;                   // 位置を変更
+				      torusKnot.rotation.x = twVal1.rotX;                   // 回転を変更
+				  })
+				  .onComplete(function() {                            // アニメーション完了時の処理
+				      tween1_3();                                    // 「帰り」のアニメーションを実行
+				  })
+				  .delay(0)                                           // 開始までの遅延時間
+				  .start();                                           // tweenアニメーション開始
+	 }
+	 function tween1_3() {                                   // 「行き」のアニメーション
+	     var tween = new TWEEN.Tween(twVal1)                 // tweenオブジェクトを作成
+				  .to(twFor3, 1000)                                   // ターゲットと到達時間
+				  .easing(TWEEN.Easing.Linear.None)                      // イージング
+				  .onUpdate(function() {                              // フレーム更新時の処理
+				      torusKnot.position.z = twVal1.posZ;                   // 位置を変更
+				      torusKnot.position.x = twVal1.posX;                   // 位置を変更
+				      torusKnot.rotation.x = twVal1.rotX;                   // 回転を変更
+				  })
+				  .onComplete(function() {                            // アニメーション完了時の処理
+				      tween1_4();                                    // 「帰り」のアニメーションを実行
+				  })
+				  .delay(0)                                           // 開始までの遅延時間
+				  .start();                                           // tweenアニメーション開始
+	 }
+	 function tween1_4() {                                   // 「行き」のアニメーション
+	     var tween = new TWEEN.Tween(twVal1)                 // tweenオブジェクトを作成
+				  .to(twFor4, 1000)                                   // ターゲットと到達時間
+				  .easing(TWEEN.Easing.Linear.None)                      // イージング
+				  .onUpdate(function() {                              // フレーム更新時の処理
+				      torusKnot.position.z = twVal1.posZ;                   // 位置を変更
+				      torusKnot.position.x = twVal1.posX;                   // 位置を変更
+				      torusKnot.rotation.x = twVal1.rotX;                   // 回転を変更
+				  })
+				  .onComplete(function() {                            // アニメーション完了時の処理
+				      tween1_back();                                    // 「帰り」のアニメーションを実行
+				  })
+				  .delay(0)                                           // 開始までの遅延時間
+				  .start();                                           // tweenアニメーション開始
+	 }
+	 function tween1_back() {                              // 「帰り」のアニメーション
+	     var tween = new TWEEN.Tween(twVal1)
+				  .to(twIni1, 2000)                                   // ターゲットを初期パラメータに設定
+				  .easing(TWEEN.Easing.Back.InOut)
+				  .onUpdate(function() {
+				      torusKnot.position.z = twVal1.posZ;
+				      torusKnot.position.x = twVal1.posX;                   // 位置を変更
+				      torusKnot.rotation.x = twVal1.rotX;
+				  })
+				  .onComplete(function() {
+				      // なにもしない
+				  })
+				  .delay(100)
+				  .start();
+	 }
+
+	 //===================================================================
+	 // マウスダウン（タップ）によるピッキング処理
+	 //===================================================================
+	 window.addEventListener("mousedown", function(ret) {
+	     var mouseX = ret.clientX;                           // マウスのx座標
+	     var mouseY = ret.clientY;                           // マウスのy座標
+	     mouseX =  (mouseX / window.innerWidth)  * 2 - 1;    // -1 ～ +1 に正規化されたx座標
+	     mouseY = -(mouseY / window.innerHeight) * 2 + 1;    // -1 ～ +1 に正規化されたy座標
+	     var pos = new THREE.Vector3(mouseX, mouseY, 1);     // マウスベクトル
+	     pos.unproject(camera);                              // スクリーン座標系をカメラ座標系に変換
+	     // レイキャスタを作成（始点, 向きのベクトル）
+	     var ray = new THREE.Raycaster(camera.position, pos.sub(camera.position).normalize());
+	     var obj = ray.intersectObjects(scene.children, true);   // レイと交差したオブジェクトの取得
+	     if(obj.length > 0) {                                // 交差したオブジェクトがあれば
+		 picked(obj[0].object.name);                       // ピックされた対象に応じた処理を実行
+	     }
+	 });
+	 // ピックされた対象に応じた処理
+	 function picked(objName) {
+	     switch(objName) {
+		 case "knot":                                      // cubeなら
+		     tween1();                                       // cubeのアニメーションを実行
+		     break;
+		 default:
+		     break;
+	     }
+	 }
+
+	 //===================================================================
+	 // FPSの表示
+	 //===================================================================
+	 let stats;
+         stats = new Stats();
+         stats.domElement.style.position = 'absolute';
+         stats.domElement.style.top = '0px';
+         stats.domElement.style.zIndex = 100;
+         document.body.appendChild(stats.domElement);
+
+	 //===================================================================
+	 // レンダリング・ループ
+	 //===================================================================
+	 let frame=0;
+	 function renderScene() {                              // レンダリング関数
+	     requestAnimationFrame(renderScene);                 // ループを要求
+	     if(source.ready === false)    { return; }             // メディアソースの準備ができていなければ抜ける
+	     //stats.update();//fpsupdate
+	     frame++;
+	     if(frame%2==0){return;}//fpsを20に減らす
+	     stats.update();//fpsupdate
+	     context.update(source.domElement);                  // ARToolkitのコンテキストを更新
+	     TWEEN.update();                                     // Tweenアニメーションを更新
+	     renderer.render(scene, camera);                     // レンダリング実施
+
+
+	 }
+	 renderScene();                                        // 最初に1回だけレンダリングをトリガ
+
+	</script>
+    </body>
+</html>
